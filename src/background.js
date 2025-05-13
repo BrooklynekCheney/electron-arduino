@@ -10,8 +10,17 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+    
+// let win = null;
+
+// var callbackForBluetoothEvent = null;
+
+// Create the browser window.
+
 async function createWindow() {
   // Create the browser window.
+
+
   const win = new BrowserWindow({
     autoHideMenuBar: true,
     icon: './public/favicon.ico',
@@ -34,7 +43,24 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+
+
+  win.maximize()
+  win.show()
+  win.webContents.on('select-bluetooth-device', (event, deviceList, callback) => {
+    event.preventDefault(); //important, otherwise first available device will be selected
+    console.log(deviceList); //if you want to see the devices in the shell
+    // let bluetoothDeviceList = deviceList;
+    let bluetoothDeviceList = deviceList;
+    callbackForBluetoothEvent = callback; 
+    // callbackForBluetoothEvent = callback; //to make it accessible outside createWindow()
+
+    win.webContents.send('channelForBluetoothDeviceList', bluetoothDeviceList);
+    });
 }
+
+
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
